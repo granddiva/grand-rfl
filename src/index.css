@@ -1,0 +1,12 @@
+@import 'tailwindcss';
+
+body {
+  margin: 0;
+  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #eef3ef;
+  color: #1f2e24;
+}
+
+* {
+  box-sizing: border-box;
+}
