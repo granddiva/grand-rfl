@@ -1,7 +1,8 @@
 import { useAppData } from '../context/useAppData'
+import { Switch } from "@/components/ui/switch"
 
 function CouriersPage() {
-  const { kurir, toggleKurir } = useAppData()
+  const { kurir, toggleKurir } = useAppData();
 
   return (
     <section className="page-section">
@@ -16,15 +17,20 @@ function CouriersPage() {
                   {item.id} - Area {item.area}
                 </p>
               </div>
-              <button type="button" className={item.aktif ? 'btn-soft' : 'btn-warning'} onClick={() => toggleKurir(item.id)}>
-                {item.aktif ? 'Aktif' : 'Tidak Aktif'}
-              </button>
+              <div className="flex items-center gap-3">
+                <span>{item.aktif ? "Aktif" : "Tidak Aktif"}</span>
+
+                <Switch
+                  checked={item.aktif}
+                  onCheckedChange={() => toggleKurir(item.id)}
+                />
+              </div>
             </li>
           ))}
         </ul>
       </article>
     </section>
-  )
+  );
 }
 
-export default CouriersPage
+export default CouriersPage;

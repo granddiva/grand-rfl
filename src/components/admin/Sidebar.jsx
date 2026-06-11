@@ -1,4 +1,9 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink } from "react-router-dom";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar";
 
 const iconMap = {
   dashboard: (
@@ -22,21 +27,25 @@ const iconMap = {
   settings: (
     <path d="M12 8a4 4 0 1 0 4 4 4 4 0 0 0-4-4zm9 4-2.1 1.2.2 2.4-2.3.8-1.4 2-2.3-.9-2 .9-1.4-2-2.3-.8.2-2.4L3 12l2.1-1.2-.2-2.4 2.3-.8 1.4-2 2.3.9 2-.9 1.4 2 2.3.8-.2 2.4z" />
   ),
-}
+};
 
 function Icon({ type }) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true">
       {iconMap[type]}
     </svg>
-  )
+  );
 }
 
 function Sidebar({ menuItems }) {
   return (
     <aside className="sidebar">
       <div className="brand">
-        <span className="brand-icon">L</span>
+        <Avatar className="h-12 w-12">
+          <AvatarImage src="/avatar-boy.jpg" alt="Admin" />
+          <AvatarFallback>AL</AvatarFallback>
+        </Avatar>
+
         <div>
           <h2>LaundryPro</h2>
           <p>Admin Panel</p>
@@ -47,7 +56,9 @@ function Sidebar({ menuItems }) {
         {menuItems.map((item) => (
           <NavLink
             key={item.label}
-            className={({ isActive }) => `menu-item ${isActive ? 'active' : ''}`}
+            className={({ isActive }) =>
+              `menu-item ${isActive ? "active" : ""}`
+            }
             to={item.path}
           >
             <Icon type={item.icon} />
@@ -57,11 +68,11 @@ function Sidebar({ menuItems }) {
       </nav>
 
       <div className="sidebar-footer">
-          <strong>Admin Laundry</strong>
+        <strong>Admin Laundry</strong>
         <span>atmiran@laundrypro.id</span>
       </div>
     </aside>
-  )
+  );
 }
 
-export default Sidebar
+export default Sidebar;
