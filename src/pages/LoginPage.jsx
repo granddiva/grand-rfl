@@ -1,110 +1,152 @@
-import { useEffect, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/useAuth' // Sesuai struktur folder context Anda
-import AuthLayout from '../layouts/AuthLayout'
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/useAuth";
+import AuthLayout from "../layouts/AuthLayout";
 
 function LoginPage() {
-  const { login, isAuthenticated } = useAuth()
-  const navigate = useNavigate()
-  const location = useLocation()
+  const { isAuthenticated } = useAuth();
 
-  // Rute tujuan setelah login berhasil
-  const tujuan = location.state?.from?.pathname ?? '/dasbor'
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const tujuan = location.state?.from?.pathname ?? "/dasbor";
 
   const [form, setForm] = useState({
-    username: '',
-    password: '',
-  })
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+    username: "",
+    password: "",
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/dasbor', { replace: true })
+      const savedUser = JSON.parse(localStorage.getItem("user_laundry_admin"));
+
+      if (savedUser?.role === "member") {
+        navigate("/member", {
+          replace: true,
+        });
+      } else {
+        navigate("/dasbor", {
+          replace: true,
+        });
+      }
     }
-  }, [isAuthenticated, navigate])
+  }, [isAuthenticated, navigate]);
 
-  const handleSubmit = async (event) => {
-    event.preventDefault()
-    setError('')
-    setLoading(true)
+  const { login } = useAuth();
 
-    // LOGIKA LOGIN KHUSUS (Sesuai Gambar Demo)
-    // Username: admin, Password: admin
-    if (form.username === 'admin' && form.password === 'admin') {
-      setTimeout(() => {
-        setLoading(false)
-        // Navigasi langsung ke dasbor sesuai rute di proyek Anda
-        navigate('/dasbor', { replace: true })
-      }, 800)
-      return
-    }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    // Jika menggunakan data asli dari server
+    setError("");
+    setLoading(true);
+
     try {
-      await login(form)
-      navigate(tujuan, { replace: true })
-    } catch (err) {
-      setError('Login gagal. Gunakan username & password demo.')
+      const user = await login(form);
+
+      if (user.role === "member") {
+        navigate("/member", {
+          replace: true,
+        });
+      } else {
+        navigate("/dasbor", {
+          replace: true,
+        });
+      }
+    } catch {
+      setError("Username/email atau password salah");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <AuthLayout>
-      <div className="flex flex-col items-center mb-8">
-        {/* Logo Bintang Biru sesuai desain LaundryKu */}
-        <div className="w-16 h-16 bg-[#EBF2FF] rounded-full flex items-center justify-center mb-4">
-          <svg viewBox="0 0 24 24" className="w-8 h-8 text-[#2563EB] fill-none stroke-current" strokeWidth="2">
-            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-          </svg>
+      <div className="text-center mb-8">
+        <div className="w-20 h-20 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <span className="text-4xl">🧺</span>
         </div>
-        <h1 className="text-2xl font-bold text-gray-900">LaundryKu</h1>
-        <p className="text-gray-500 text-sm">Sistem Manajemen Laundry</p>
+
+        <h1 className="text-2xl font-bold">LaundryKu</h1>
+
+        <p className="text-gray-500">Sistem Manajemen Laundry</p>
       </div>
 
-      <form className="space-y-4" onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-xs font-medium text-gray-700 mb-1">Username</label>
+          <label className="block mb-1 text-sm font-medium">
+            Username / Email
+          </label>
+
           <input
             type="text"
-            placeholder="Masukkan username"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="admin atau admin@gmail.com"
+            className="w-full border rounded-lg px-4 py-2"
             value={form.username}
-            onChange={(e) => setForm({ ...form, username: e.target.value })}
-            required
+            onChange={(e) =>
+              setForm({
+                ...form,
+                username: e.target.value,
+              })
+            }
           />
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-gray-700 mb-1">Password</label>
+          <label className="block mb-1 text-sm font-medium">Password</label>
+
           <input
             type="password"
             placeholder="Masukkan password"
-            className="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full border rounded-lg px-4 py-2"
             value={form.password}
-            onChange={(e) => setForm({ ...form, password: e.target.value })}
-            required
+            onChange={(e) =>
+              setForm({
+                ...form,
+                password: e.target.value,
+              })
+            }
           />
         </div>
 
-        {error && <p className="text-xs text-red-500 text-center">{error}</p>}
+        {error && <p className="text-red-500 text-sm">{error}</p>}
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-[#2563EB] hover:bg-blue-700 text-white font-semibold py-2 rounded-lg transition-colors shadow-lg shadow-blue-100"
+          className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
         >
-          {loading ? 'Memproses...' : 'Masuk'}
+          {loading ? "Memproses..." : "Masuk"}
         </button>
       </form>
 
-      <div className="mt-6 text-center text-[10px] text-gray-400">
-        Demo: username: <strong>admin</strong>, password: <strong>admin</strong>
+      <div className="mt-6 text-center text-xs text-gray-500">
+        <p>
+          Admin Username: <b>admin</b>
+        </p>
+        <p>
+          Admin Email: <b>admin@gmail.com</b>
+        </p>
+        <p>
+          Admin Password: <b>admin</b>
+        </p>
+
+        <br />
+
+        <p>
+          Member Username: <b>member</b>
+        </p>
+        <p>
+          Member Email: <b>member@gmail.com</b>
+        </p>
+        <p>
+          Member Password: <b>member</b>
+        </p>
       </div>
     </AuthLayout>
-  )
+  );
 }
 
-export default LoginPage
+export default LoginPage;

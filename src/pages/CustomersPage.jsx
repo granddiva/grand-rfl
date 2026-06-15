@@ -1,23 +1,36 @@
 import { useMemo, useState } from 'react'
 import { useAppData } from '../context/useAppData'
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+
 function CustomersPage() {
-  const { pelanggan, tambahPelanggan } = useAppData()
-  const [kataKunci, setKataKunci] = useState('')
-  const [form, setForm] = useState({ nama: '', telepon: '', alamat: '' })
+  const { pelanggan, tambahPelanggan } = useAppData();
+  const [kataKunci, setKataKunci] = useState("");
+  const [form, setForm] = useState({ nama: "", telepon: "", alamat: "" });
 
   const hasilCari = useMemo(() => {
-    const keyword = kataKunci.toLowerCase().trim()
-    if (!keyword) return pelanggan
-    return pelanggan.filter((item) => item.nama.toLowerCase().includes(keyword))
-  }, [kataKunci, pelanggan])
+    const keyword = kataKunci.toLowerCase().trim();
+    if (!keyword) return pelanggan;
+    return pelanggan.filter((item) =>
+      item.nama.toLowerCase().includes(keyword),
+    );
+  }, [kataKunci, pelanggan]);
 
-  const handleSubmit = (event) => {
-    event.preventDefault()
-    if (!form.nama.trim() || !form.telepon.trim()) return
-    tambahPelanggan(form)
-    setForm({ nama: '', telepon: '', alamat: '' })
-  }
+  const handleSubmit = () => {
+    if (!form.nama.trim() || !form.telepon.trim()) return;
+    tambahPelanggan(form);
+    setForm({ nama: "", telepon: "", alamat: "" });
+  };
 
   return (
     <section className="page-section">
@@ -28,19 +41,47 @@ function CustomersPage() {
             <input
               placeholder="Nama pelanggan"
               value={form.nama}
-              onChange={(event) => setForm((prev) => ({ ...prev, nama: event.target.value }))}
+              onChange={(event) =>
+                setForm((prev) => ({ ...prev, nama: event.target.value }))
+              }
             />
             <input
               placeholder="Nomor telepon"
               value={form.telepon}
-              onChange={(event) => setForm((prev) => ({ ...prev, telepon: event.target.value }))}
+              onChange={(event) =>
+                setForm((prev) => ({ ...prev, telepon: event.target.value }))
+              }
             />
             <input
               placeholder="Alamat"
               value={form.alamat}
-              onChange={(event) => setForm((prev) => ({ ...prev, alamat: event.target.value }))}
+              onChange={(event) =>
+                setForm((prev) => ({ ...prev, alamat: event.target.value }))
+              }
             />
-            <button type="submit">Simpan Pelanggan</button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <button type="button">Simpan Pelanggan</button>
+              </AlertDialogTrigger>
+
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Simpan Data Pelanggan?</AlertDialogTitle>
+
+                  <AlertDialogDescription>
+                    Pastikan data pelanggan sudah benar sebelum disimpan.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Batal</AlertDialogCancel>
+
+                  <AlertDialogAction onClick={handleSubmit}>
+                    Ya, Simpan
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </form>
         </article>
 
@@ -51,7 +92,9 @@ function CustomersPage() {
             value={kataKunci}
             onChange={(event) => setKataKunci(event.target.value)}
           />
-          <p className="muted">Menampilkan {hasilCari.length} data pelanggan.</p>
+          <p className="muted">
+            Menampilkan {hasilCari.length} data pelanggan.
+          </p>
         </article>
       </div>
 
@@ -81,7 +124,7 @@ function CustomersPage() {
         </div>
       </article>
     </section>
-  )
+  );
 }
 
-export default CustomersPage
+export default CustomersPage;
